@@ -6,6 +6,7 @@ const searchBtn = document.getElementById('search-btn');
 const sliderBtn = document.getElementById('create-slider');
 const sliderContainer = document.getElementById('sliders');
 const spinner = document.getElementById('loading-spinner');
+const errorSMS = document.getElementById('error-sms');
 
 // selected image 
 let sliders = [];
@@ -17,7 +18,7 @@ const KEY = '15674931-a9d714b6e9d654524df198e00&q';
 
 // show images 
 const showImages = (images) => {
-
+  errorSMS.innerText = '';
   imagesArea.style.display = 'block';
   gallery.innerHTML = '';
   // show gallery title
@@ -42,16 +43,23 @@ const showImages = (images) => {
 const getImages = async (query) => {
 
   toggleSpinner();
-
   const url = `https://pixabay.com/api/?key=${KEY}&q=${query}&image_type=photo&pretty=true`;
-
   try {
     const res = await fetch(url);
     const data = await res.json();
     showImages(data.hits);
+
+    if (isEmpty(data.hits)) {
+      showErrorInfo('Sorry no search quarry available by your given word...');
+      imagesArea.style.display = 'none';
+    }
   } catch (error) {
     console.log("Sorry no search quarry available...");
   }
+}
+// empty object checking for users wrong keyword input...
+function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
 }
 
 let slideIndex = 0;
@@ -157,4 +165,8 @@ sliderBtn.addEventListener('click', function () {
 
 const toggleSpinner = () => {
   spinner.classList.toggle('d-none');
+}
+
+const showErrorInfo = error => {
+  errorSMS.innerText = error;
 }
